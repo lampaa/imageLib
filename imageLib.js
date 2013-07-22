@@ -644,7 +644,7 @@ imageLib.func = imageLib.prototype = {
 			this.outputHeightWorkBench = this._generateFloatBuffer(this.targetWidthMultipliedByChannels);
 		}
 	},
-	
+
 	_generateFloatBuffer: function (bufferLength) {
 		//Generate a float32 typed array buffer:
 		try {
@@ -654,7 +654,7 @@ imageLib.func = imageLib.prototype = {
 			return [];
 		}
 	},
-	
+
 	_generateUint8Buffer: function (bufferLength) {
 		//Generate a uint8 typed array buffer:
 		try {
@@ -679,14 +679,14 @@ imageLib.func = imageLib.prototype = {
 		
 		return R;
 	},
-	
+
 	_readUInt16Bmp: function() {
 		var b1, b2;
 		b1 = this.data[this.pos++];
 		b2 = this.data[this.pos++] << 8;
 		return b1 | b2;
-    },
-	
+	},
+
 	_readUInt32Bmp: function() {
 		var b1, b2, b3, b4;
 		b1 = this.data[this.pos++];
@@ -694,5 +694,5 @@ imageLib.func = imageLib.prototype = {
 		b3 = this.data[this.pos++] << 16;
 		b4 = this.data[this.pos++] << 24;
 		return b1 | b2 | b3 | b4;
-    }
+	}
 }

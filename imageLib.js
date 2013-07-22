@@ -344,6 +344,7 @@ imageLib.func = imageLib.prototype = {
 	 * pasteTo(resourse toImage, int x, int y[, boolean blending])
 	 * 
 	 * Paste palette to pallette of the image "toImage".
+	 * @param toImage - pallette to insert.
 	 * @param x - x-coordinate of destination point. 
 	 * @param y - y-coordinate of destination point. 
 	 * @param blending - saving transparency, between 0 and 255 (inclusive). 
@@ -414,7 +415,7 @@ imageLib.func = imageLib.prototype = {
 	/**
 	 * toJpeg(string file[, function callback, int quality]])
 	 * 
-	 * Save palette as a new PNG image.
+	 * Save palette as a new JPEG image.
 	 * @param file - new image file.
 	 * @param callback - call function after creating a palette.
 	 * @param quality - quality a new image, between 0 and 100 (inclusive). 

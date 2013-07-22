@@ -687,7 +687,7 @@ imageLib.func = imageLib.prototype = {
 		return b1 | b2;
     },
 	
-    _readUInt32Bmp: function() {
+	_readUInt32Bmp: function() {
 		var b1, b2, b3, b4;
 		b1 = this.data[this.pos++];
 		b2 = this.data[this.pos++] << 8;

@@ -1,6 +1,11 @@
 /**
- * imageLib
+ * imageLib.js - module for processing and manipulation images on pure JavaScript
+ * version: 	0.1 alpha
+ * autor: 		lampa
+ * license: 	MIT
+ * https://github.com/lampaa/imageLib
  */
+
 exports = module.exports = imageLib;
 
 function imageLib(first_argument, second_argument) {
@@ -17,6 +22,13 @@ imageLib.func = imageLib.prototype = {
 	png_encode: require('./modules/pngencoder.js'),
 	jpeg_encode: require('./modules/jpegencoder.js'),
 	
+	/**
+	 * init(mixed first_argument[, int second_argument])
+	 * 
+	 * Preparing an image or create a new sizes of canvas.
+	 * @param first_argument - filename or width a new image.
+	 * @param second_argument - height a new image.
+	 */
 	init: function(first_argument, second_argument) {
 		this.data = null;
 		this.Ndata = null;
@@ -54,6 +66,9 @@ imageLib.func = imageLib.prototype = {
 		}
 	},
 	
+	/**
+	 * 
+	 */
 	stack: function (task, callback) {
 		if(callback) {
 			this._stack.push([task, callback]);
@@ -65,22 +80,12 @@ imageLib.func = imageLib.prototype = {
 		}
 	},
 	
-	readUInt16Bmp: function() {
-		var b1, b2;
-		b1 = this.data[this.pos++];
-		b2 = this.data[this.pos++] << 8;
-		return b1 | b2;
-    },
-	
-    readUInt32Bmp: function() {
-		var b1, b2, b3, b4;
-		b1 = this.data[this.pos++];
-		b2 = this.data[this.pos++] << 8;
-		b3 = this.data[this.pos++] << 16;
-		b4 = this.data[this.pos++] << 24;
-		return b1 | b2 | b3 | b4;
-    },
-	
+	/**
+	 * create(function callback)
+	 * 
+	 * Create a new palette from sizes of canvas.
+	 * @param callback - call function after creating a palette.
+	 */
 	create: function(callback) {
 		this.history.push('create image');
 		var buff = new Buffer(this.width * this.height * 4);
@@ -89,6 +94,12 @@ imageLib.func = imageLib.prototype = {
 		callback.call(this);
 	},
 	
+	/**
+	 * jpegToData(function callback)
+	 * 
+	 * Decoding JPEG image to the palette.
+	 * @param callback - call function after decoding.
+	 */	
 	jpegToData: function(callback) {
 		
 		if(!this.ifLoad) {
@@ -112,6 +123,12 @@ imageLib.func = imageLib.prototype = {
 		});
 	},
 	
+	/**
+	 * bmpToData(function callback)
+	 * 
+	 * Decoding BMP image to the palette.
+	 * @param callback - call function after decoding.
+	 */	
 	bmpToData: function(callback) {
 		
 		if(!this.ifLoad) {
@@ -139,20 +156,20 @@ imageLib.func = imageLib.prototype = {
 			throw 'Invalid BMP file.';
 		}
 		
-		fileSize = this.readUInt32Bmp();
+		fileSize = this._readUInt32Bmp();
 		this.pos += 4;
-		offset = this.readUInt32Bmp();
-		headerLength = this.readUInt32Bmp();
-		this.width = this.readUInt32Bmp();
-		this.height = this.readUInt32Bmp();
-		this.colorPlaneCount = this.readUInt16Bmp();
-		this.bitsPerPixel = this.readUInt16Bmp();
-		this.compressionMethod = this.readUInt32Bmp();
-		this.rawSize = this.readUInt32Bmp();
-		this.hResolution = this.readUInt32Bmp();
-		this.vResolution = this.readUInt32Bmp();
-		this.paletteColors = this.readUInt32Bmp();
-		this.importantColors = this.readUInt32Bmp();
+		offset = this._readUInt32Bmp();
+		headerLength = this._readUInt32Bmp();
+		this.width = this._readUInt32Bmp();
+		this.height = this._readUInt32Bmp();
+		this.colorPlaneCount = this._readUInt16Bmp();
+		this.bitsPerPixel = this._readUInt16Bmp();
+		this.compressionMethod = this._readUInt32Bmp();
+		this.rawSize = this._readUInt32Bmp();
+		this.hResolution = this._readUInt32Bmp();
+		this.vResolution = this._readUInt32Bmp();
+		this.paletteColors = this._readUInt32Bmp();
+		this.importantColors = this._readUInt32Bmp();
 
 
 		var Ndata = [];
@@ -197,6 +214,12 @@ imageLib.func = imageLib.prototype = {
 		return;
 	},
 	
+	/**
+	 * pngToData(function callback)
+	 * 
+	 * Decoding PNG image to the palette.
+	 * @param callback - call function after decoding.
+	 */	
 	pngToData: function(callback) {
 		
 		if(!this.ifLoad) {
@@ -221,6 +244,13 @@ imageLib.func = imageLib.prototype = {
 		return;		
 	},
 	
+	/**
+	 * getPixel(int x, int y) 
+	 * 
+	 * Get pixel.
+	 * @param x - x-coordinate of the point. 
+	 * @param y - y-coordinate of the point. 
+	 */	
 	getPixel: function(x, y) {
 		var offset = (x + y * this.width) * 4;
 	
@@ -232,6 +262,14 @@ imageLib.func = imageLib.prototype = {
 		];
 	},
 	
+	/**
+	 * setPixel(int x, int y, int r, int g, int b, int a)
+	 * 
+	 * Set pixel.
+	 * @param x - x-coordinate of the point. 
+	 * @param y - y-coordinate of the point. 
+	 * @param r, g, b, a - Values of red, green, blue components and alpha channel, between 0 and 255 (inclusive). 	
+	 */	
 	setPixel: function (x, y, r, g, b, a) {
 		x = Math.ceil(x);
 		y = Math.ceil(y);
@@ -240,9 +278,17 @@ imageLib.func = imageLib.prototype = {
 		this.data[offset + 0] = Math.floor(r);
 		this.data[offset + 1] = Math.floor(g);
 		this.data[offset + 2] = Math.floor(b);
-		this.data[offset + 3] = (arguments.length == 6) ? Math.floor(a) : 255;
+		this.data[offset + 3] = (arguments.length == 5) ? Math.floor(a) : 255;
 	},	
 	
+	/**
+	 * resize(int width, int height[, boolean interpolation])
+	 * 
+	 * Rezize an image using the given new width and height.
+	 * @param width - new width.
+	 * @param height - new height.
+	 * @param interpolation - set the interpolation method.
+	 */	
 	resize: function (width, height, interpolation) {
 		this.widthOriginal = parseInt(this.width);
 		this.heightOriginal = parseInt(this.height);
@@ -292,6 +338,101 @@ imageLib.func = imageLib.prototype = {
 		
 		this.width = width;
 		this.height = height;
+	},
+	
+	/**
+	 * pasteTo(resourse toImage, int x, int y[, boolean blending])
+	 * 
+	 * Paste palette to pallette of the image "toImage".
+	 * @param x - x-coordinate of destination point. 
+	 * @param y - y-coordinate of destination point. 
+	 * @param blending - saving transparency, between 0 and 255 (inclusive). 
+	 */	
+	pasteTo: function (toImage, x, y, blending) {
+		
+		blending = (blending && blending == true)?true:false;
+		
+		var pluse = 0,
+		iterator = 0,
+		y_coord = y,
+		x_coord = x;
+		
+		for(; y_coord < (this.height + y); y_coord++) {
+			pluse = y_coord * toImage.width * 4;
+			
+			for(x_coord = x * 4; x_coord < (this.width + x) * 4; x_coord++, iterator++) {
+				if(blending) {
+					var pixel = this._alphaBlending([
+					toImage.data[pluse+x_coord++],
+					toImage.data[pluse+x_coord++],
+					toImage.data[pluse+x_coord++],
+					toImage.data[pluse+x_coord],
+					],[
+					this.data[iterator++],
+					this.data[iterator++],
+					this.data[iterator++],
+					this.data[iterator],
+					]);
+					
+					toImage.data[pluse+(x_coord-3)] = pixel[0];
+					toImage.data[pluse+(x_coord-2)] = pixel[1];
+					toImage.data[pluse+(x_coord-1)] = pixel[2];
+					toImage.data[pluse+(x_coord)] = pixel[3];
+				}
+				else {
+					toImage.data[pluse+x_coord] = this.data[iterator];
+				}
+			}
+		}
+		
+		return toImage;
+	},
+	
+	/**
+	 * toPng(string file[, function callback])
+	 * 
+	 * Save palette as a new PNG image.
+	 * @param file - new image file.
+	 * @param callback - call function after creating a palette.
+	 */	
+	toPng: function(file, callback) {
+		var that = this;
+		
+		this.png_encode.encode(this, function (data) {
+			var fd = that.fs.openSync(file, 'w');
+			for(var i = 0; i < data.length; i++) {
+				that.fs.writeSync(fd, data[i], 0, data[i].length);
+			}
+			that.fs.closeSync(fd);
+			
+			if(callback) {
+				callback.call(that);
+			}
+		});
+	},
+	
+	/**
+	 * toJpeg(string file[, function callback, int quality]])
+	 * 
+	 * Save palette as a new PNG image.
+	 * @param file - new image file.
+	 * @param callback - call function after creating a palette.
+	 * @param quality - quality a new image, between 0 and 100 (inclusive). 
+	 */		
+	toJpeg: function(file, callback, quality) {
+		quality = !quality?85:quality;
+		
+		var data = this.jpeg_encode.encode(this, quality);
+		
+		var fd =  this.fs.openSync(file, 'w');
+		var bf = new Buffer(data);
+		
+		this.fs.writeSync(fd, bf, 0, bf.length);
+		this.fs.closeSync(fd);
+		
+		if(callback) {
+			callback.call(this);
+		}
 	},
 	
 	_resizeWidthRGBA: function (buffer) {
@@ -539,75 +680,19 @@ imageLib.func = imageLib.prototype = {
 		return R;
 	},
 	
-	pasteTo: function (toImage, x, y, blending) {
-		
-		blending = (blending && blending == true)?true:false;
-		
-		var pluse = 0,
-			iterator = 0,
-			y_coord = y,
-			x_coord = x;
-		
-		for(; y_coord < (this.height + y); y_coord++) {
-			pluse = y_coord * toImage.width * 4;
-			
-			for(x_coord = x * 4; x_coord < (this.width + x) * 4; x_coord++, iterator++) {
-				if(blending) {
-					var pixel = this._alphaBlending([
-						toImage.data[pluse+x_coord++],
-						toImage.data[pluse+x_coord++],
-						toImage.data[pluse+x_coord++],
-						toImage.data[pluse+x_coord],
-					],[
-						this.data[iterator++],
-						this.data[iterator++],
-						this.data[iterator++],
-						this.data[iterator],
-					]);
-						
-					toImage.data[pluse+(x_coord-3)] = pixel[0];
-					toImage.data[pluse+(x_coord-2)] = pixel[1];
-					toImage.data[pluse+(x_coord-1)] = pixel[2];
-					toImage.data[pluse+(x_coord)] = pixel[3];
-				}
-				else {
-					toImage.data[pluse+x_coord] = this.data[iterator];
-				}
-			}
-		}
-		
-		return toImage;
-	},
+	_readUInt16Bmp: function() {
+		var b1, b2;
+		b1 = this.data[this.pos++];
+		b2 = this.data[this.pos++] << 8;
+		return b1 | b2;
+    },
 	
-	toPng: function(file, callback) {
-		var that = this;
-		
-		this.png_encode.encode(this, function (data) {
-			var fd = that.fs.openSync(file, 'w');
-			for(var i = 0; i < data.length; i++) {
-				that.fs.writeSync(fd, data[i], 0, data[i].length);
-			}
-			that.fs.closeSync(fd);
-			
-			if(callback) {
-				callback.call(that);
-			}
-		});
-	},
-	
-	toJpeg: function(file, callback, quality) {
-		quality = !quality?85:quality;
-		
-		var data = this.jpeg_encode.encode(this, quality);
-		
-		var fd =  this.fs.openSync(file, 'w');
-		var bf = new Buffer(data);
-		
-		this.fs.writeSync(fd, bf, 0, bf.length);
-		this.fs.closeSync(fd);
-		
-		if(callback) {
-			callback.call(this);
-		}
-	}
+    _readUInt32Bmp: function() {
+		var b1, b2, b3, b4;
+		b1 = this.data[this.pos++];
+		b2 = this.data[this.pos++] << 8;
+		b3 = this.data[this.pos++] << 16;
+		b4 = this.data[this.pos++] << 24;
+		return b1 | b2 | b3 | b4;
+    }
 }

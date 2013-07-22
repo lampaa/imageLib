@@ -41,4 +41,4 @@ imageLib(200, 200).create(function() {
 #### [resize(int width, int height[, boolean interpolation])](documentation/en/resize.md)
 #### [pasteTo(resourse toImage, int x, int y[, boolean blending])](documentation/en/pasteTo.md)
 #### [toPng(string file[, function callback])](documentation/en/toPng.md)
-#### [toJpeg(string file[, function callback, int quality]])](documentation/en/toJpeg.md)
+#### [toJpeg(string file[, function callback, [int quality]])](documentation/en/toJpeg.md)

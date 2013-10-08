@@ -1,7 +1,7 @@
 ## Save palette as a new JPEG image.
 
 ```js
-toJpeg(string file[, function callback, int quality]])
+toJpeg(string file[, function callback[, int quality]])
 ```
 
 

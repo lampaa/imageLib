@@ -1,6 +1,12 @@
 # imageLib.js
 Module for processing and manipulation images on pure JavaScript
 
+`npm install imagelib -g`
+
+Install zlib:
+
+`npm install zlib -g`
+
 ## Example
 ```js
 var imageLib = require('./imageLib.js');
